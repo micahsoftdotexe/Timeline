@@ -1,0 +1,18 @@
+{
+    "database":{
+        "url" : "localhost",
+        "username" : "admin",
+        "password" : "admin",
+        "database_name" : "timeline"
+
+
+    },
+    "defaults":[
+        {
+            "adminUser": {
+                "username":"admin",
+                "password":"admin"
+            }
+        }
+    ]
+}

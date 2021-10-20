@@ -1,0 +1,16 @@
+import mariadb as mdb
+import sys
+class Database():
+    def __init__(self,url, username, password,name):
+        try: 
+            self.connection = mdb.connect(
+                user = username,
+                password = password,
+                host = url,
+                port = 3306,
+                database = name
+            )
+        except mdb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+        self.cursor = self.connection.cursor()
