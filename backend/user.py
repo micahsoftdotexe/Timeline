@@ -2,12 +2,13 @@ import flask_login
 from werkzeug.security import generate_password_hash
 #from database import Database
 class User(flask_login.UserMixin): 
-    def __init__(self,username,first_name,last_name,password, role = 'Employee',  hashed = False, id = None):
+    def __init__(self,username,first_name,last_name,password, wage, role = 'employee',  hashed = False, id = None):
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
-        self.password = generate_password_hash(password) if (not hashed) else password 
+        self.password = generate_password_hash(password) if (not hashed) else password
         self.role = role
+        self.wage = wage
         self.id = id
     def set(self, database):
         database.cursor.execute("INSERT INTO user (username, first_name, last_name, password, role) VALUES (?, ?, ?, ?, ?);",
@@ -29,6 +30,7 @@ class User(flask_login.UserMixin):
             'firstName' : self.first_name,
             'lastName'  : self.last_name,
             'role': self.role,
+            'wage': self.wage,
             'id': self.id
         } 
     def getClockEntries(self,database):
@@ -36,6 +38,7 @@ class User(flask_login.UserMixin):
         return database.cursor.fetchall()
     
     def checkRole(self,role):
+        #print(self.role)
         if(self.role == 'admin' or self.role == role):
             return True
         else:
@@ -45,12 +48,12 @@ class User(flask_login.UserMixin):
         database.cursor.execute(f"SELECT * FROM user WHERE id = {id}")
         if(database.cursor.arraysize >0 and database.cursor.arraysize<2): 
             user_array = database.cursor.fetchone()
-            return User(user_array[0], user_array[1], user_array[2], user_array[3], user_array[4], True, user_array[5])
+            return User(user_array[0], user_array[1], user_array[2], user_array[3], user_array[4], user_array[5], True, user_array[6])
     @staticmethod
     def getByUsername(username,database):
         database.cursor.execute(f"SELECT * FROM user WHERE username=?;", (username,))
         if(database.cursor.arraysize >0 and database.cursor.arraysize<2): 
             user_array = database.cursor.fetchone()
-            return User(user_array[0], user_array[1], user_array[2], user_array[3], user_array[4], True, user_array[5])   
+            return User(user_array[0], user_array[1], user_array[2], user_array[3], user_array[4], user_array[5], True, user_array[6])   
         else:
             return -1
