@@ -6,15 +6,15 @@ from flask_cors import CORS
 from flask_login.utils import logout_user
 import os
 from werkzeug.security import check_password_hash
-from user import User
-from database import Database
+from backend.user import User
+from backend.database import Database
 import datetime
 database = None
 login_manager = flask_login.LoginManager()
 app = Flask(__name__)
 
 def connectDb():
-    f = open('../settings.json')
+    f = open('./settings.json')
     settings = json.load(f)["database"]
     #load database settings from json settings file
     url = settings["url"]
@@ -30,19 +30,20 @@ def connectDb():
 def load_user(id):
     return User.getById(id,database)
 
-# @app.route('/hello')
-# @login_required
-# def hello():
-#     user = User.getById(1,database)
-#     userDict = {
-#         'username': user.username,
-#         'firstName' : user.first_name,
-#         'lastName'  : user.last_name,
-#         'password': user.password,
-#         'role': user.role,
-#         'id': user.id
-#     }
-#     return jsonify(userDict)
+@app.route('/hello')
+#@login_required
+def hello():
+    # user = User.getById(1,database)
+    # userDict = {
+    #     'username': user.username,
+    #     'firstName' : user.first_name,
+    #     'lastName'  : user.last_name,
+    #     'password': user.password,
+    #     'role': user.role,
+    #     'id': user.id
+    # }
+    # return jsonify(userDict)
+    return 'hello'
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -154,12 +155,14 @@ def deleteClock(recordId):
 
 
 def start_server():
+    from waitress import serve
     if database == None:
         connectDb()
     CORS(app)
     app.secret_key = os.urandom(24)
     login_manager.init_app(app)
     app.run(debug=True)
+    #serve(app, host = "0.0.0.0", port=8080)
 
 
 

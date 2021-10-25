@@ -1,0 +1,6 @@
+Flask_Login==0.5.0
+Flask==2.0.1
+waitress==2.0.0
+mariadb==1.0.8
+Werkzeug==2.0.1
+Flask_Cors==3.0.10
