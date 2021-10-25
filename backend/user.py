@@ -2,7 +2,7 @@ import flask_login
 from werkzeug.security import generate_password_hash
 #from database import Database
 class User(flask_login.UserMixin): 
-    def __init__(self,username,first_name,last_name,password, wage, role = 'employee',  hashed = False, id = None):
+    def __init__(self,username,first_name,last_name,password, wage = None, role = 'employee',  hashed = False, id = None):
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
