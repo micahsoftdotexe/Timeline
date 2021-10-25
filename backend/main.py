@@ -153,17 +153,18 @@ def deleteClock(recordId):
 
 
 
-
-
-
-
-if __name__ == "__main__":
-
-    #app = Flask(__name__)
+def start_server():
     if database == None:
         connectDb()
     CORS(app)
     app.secret_key = os.urandom(24)
     login_manager.init_app(app)
     app.run(debug=True)
+
+
+
+if __name__ == "__main__":
+
+    #app = Flask(__name__)
+    start_server()
     #print('here')

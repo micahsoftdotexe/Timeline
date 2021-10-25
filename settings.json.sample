@@ -7,12 +7,10 @@
 
 
     },
-    "defaults":[
-        {
-            "adminUser": {
-                "username":"admin",
-                "password":"admin"
-            }
+    "defaults":{
+        "adminUser": {
+            "username":"admin",
+            "password":"admin"
         }
-    ]
+    }
 }
