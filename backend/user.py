@@ -30,12 +30,16 @@ class User(flask_login.UserMixin):
             'firstName' : self.first_name,
             'lastName'  : self.last_name,
             'role': self.role,
-            'wage': self.wage,
+            'wage': str(self.wage),
             'id': self.id
         } 
     def getClockEntries(self,database):
         database.cursor.execute("SELECT * FROM clock_entries WHERE user_id=? ORDER BY clock_in_time ASC", (self.id,))
-        return database.cursor.fetchall()
+        entries = database.cursor.fetchall()
+        if entries:
+            return entries
+        else:
+            return False
     
     def checkRole(self,role):
         #print(self.role)
@@ -48,12 +52,18 @@ class User(flask_login.UserMixin):
         database.cursor.execute(f"SELECT * FROM user WHERE id = {id}")
         if(database.cursor.arraysize >0 and database.cursor.arraysize<2): 
             user_array = database.cursor.fetchone()
-            return User(user_array[0], user_array[1], user_array[2], user_array[3], user_array[4], user_array[5], True, user_array[6])
+            if user_array != None:
+                return User(user_array[0], user_array[1], user_array[2], user_array[3], user_array[4], user_array[5], True, user_array[6])
+            else:
+                return False
     @staticmethod
     def getByUsername(username,database):
         database.cursor.execute(f"SELECT * FROM user WHERE username=?;", (username,))
         if(database.cursor.arraysize >0 and database.cursor.arraysize<2): 
             user_array = database.cursor.fetchone()
-            return User(user_array[0], user_array[1], user_array[2], user_array[3], user_array[4], user_array[5], True, user_array[6])   
+            if user_array != None:
+                return User(user_array[0], user_array[1], user_array[2], user_array[3], user_array[4], user_array[5], True, user_array[6])  
+            else: 
+                return False 
         else:
-            return -1
+            return False
