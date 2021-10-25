@@ -35,25 +35,28 @@ def migrate():
     f = open('./settings.json')
     settings = json.load(f)["database"]
     database_name = settings["database_name"]
-    #database.cursor.execute("SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_SCHEMA = ?) AND (TABLE_NAME = ?) OR (TABLE_NAME = ?)", (database_name, 'user', 'clock_entries'))
-    #ount = database.cursor.fetchone()
-    #if count[0] > 0: #check if need to drop tables
     dropTables()
-    #continue migragtion
     database.cursor.execute("CREATE TABLE `clock_entries` (`id` int(11) NOT NULL,`user_id` int(11) NOT NULL,`clock_in_time` datetime(1) NOT NULL,`clock_out_time` datetime DEFAULT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;")
     database.connection.commit()
     database.cursor.execute("CREATE TABLE `user` (`username` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,`first_name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,`last_name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,`password` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,`wage` decimal(10,2) DEFAULT NULL,`role` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,`id` int(11) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;")
     database.connection.commit()
 
 
+def checkMigration():
+    if(database == None):
+        connectDb()
+    f = open('./settings.json', 'r+')
+    json_file1 = json.load(f)
+    settings = json_file1["database"]
+    #print('out here')
+    if settings['migrate'] == "true":
+        #print('Here')
+        migrate()
+        #json_file1 = json.load(f)
+        json_file1["database"]['migrate'] = "false"
+        f.seek(0)
+        json.dump(json_file1, f)
+        f.truncate()
+        f.close()
 
-    
-
-if(database == None):
-    connectDb()
-f = open('./settings.json')
-settings = json.load(f)["database"]
-if settings['migrate'] == "true":
-    migrate()
-else:
-    sys.exit(1)    
+    return True   
