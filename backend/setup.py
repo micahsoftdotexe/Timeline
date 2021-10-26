@@ -62,7 +62,6 @@ def setup():
         #print('Here')
         migrate()
         username = json_file1["defaults"]['adminUser']["username"]
-        #print(username)
         password = json_file1["defaults"]["adminUser"]["password"]
         seedAdmin(username,password)
         json_file1["database"]['migrate'] = "false"
