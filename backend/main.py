@@ -116,6 +116,7 @@ def report(userId):
         database.cursor.execute("SELECT * FROM clock_entries WHERE user_id=? AND clock_in_time > ? AND (clock_out_time < ? OR clock_out_time IS NULL)", (userId, last_week.strftime("%Y-%m-%d %H:%M:%S"), tomorrow.strftime("%Y-%m-%d %H:%M:%S"),))
         entries = database.cursor.fetchall()
         total_hours = 0
+        response['unfinished'] = []
         for entry in entries:
             if(entry[-1] != None):
                 total_time = entry[-1]-entry[-2]
@@ -126,6 +127,7 @@ def report(userId):
                 else:
                     response['unfinished'] = [entry[-2]]
         response['total_hours'] = total_hours
+        response['wage'] = "none"
         if(flask_login.current_user.wage != None):
             response['wage'] = str(round(float(flask_login.current_user.wage)*total_hours,2))
         
