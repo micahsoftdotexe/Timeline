@@ -41,8 +41,8 @@ def migrate():
     database.cursor.execute("CREATE TABLE `user` (`username` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,`first_name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,`last_name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,`password` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,`wage` decimal(10,2) DEFAULT NULL,`role` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,`id` int(11) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;")
     database.cursor.execute("ALTER TABLE `clock_entries` ADD PRIMARY KEY (`id`), ADD KEY `user_id` (`user_id`);")
     database.cursor.execute("ALTER TABLE `user` ADD PRIMARY KEY (`id`);")
-    database.cursor.execute("ALTER TABLE `clock_entries` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;")
-    database.cursor.execute("ALTER TABLE `user` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38")
+    database.cursor.execute("ALTER TABLE `clock_entries` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT;")
+    database.cursor.execute("ALTER TABLE `user` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT;")
     database.cursor.execute("ALTER TABLE `clock_entries` ADD CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);")
     database.connection.commit()
 
@@ -57,14 +57,12 @@ def setup():
     f = open('./settings.json', 'r+')
     json_file1 = json.load(f)
     settings = json_file1["database"]
-    #print('out here')
     if settings['migrate'] == "true":
-        #print('Here')
         migrate()
-        username = json_file1["defaults"]['adminUser']["username"]
+        username = json_file1["defaults"]["adminUser"]["username"]
         password = json_file1["defaults"]["adminUser"]["password"]
         seedAdmin(username,password)
-        json_file1["database"]['migrate'] = "false"
+        json_file1["database"]["migrate"] = "false"
         f.seek(0)
         json.dump(json_file1, f)
         f.truncate()
