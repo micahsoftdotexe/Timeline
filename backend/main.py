@@ -63,10 +63,10 @@ def logout():
     logout_user()
     return jsonify({"status":200,})
 
-@app.route('/get-current-user')
-@login_required
-def getUser():
-    return (flask_login.current_user.to_json())
+@app.route('/check-login')
+def check_login():
+    #print(flask_login.current_user.is_anonymous)
+    return (jsonify({"status":200,"data": not flask_login.current_user.is_anonymous}))
 
 #given a user. Test if the user can clock in or needs to clock out
 def testClockIn(user):

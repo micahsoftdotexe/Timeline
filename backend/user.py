@@ -10,6 +10,7 @@ class User(flask_login.UserMixin):
         self.role = role
         self.wage = wage
         self.id = id
+        self.is_anonymous = False
     def set(self, database):
         database.cursor.execute("INSERT INTO user (username, first_name, last_name, password, role) VALUES (?, ?, ?, ?, ?);",
         (self.username, self.first_name, self.last_name, self.password, self.role)) 
