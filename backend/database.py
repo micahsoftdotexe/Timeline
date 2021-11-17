@@ -8,7 +8,10 @@ class Database():
                 password = password,
                 host = url,
                 port = 3306,
-                database = name
+                database = name,
+                connect_timeout=1000,
+                #wait_timeout=28800,
+                #interactive_timeout=28800
             )
         except mdb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")

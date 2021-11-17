@@ -152,7 +152,7 @@ def start_server():
     from waitress import serve
     if database == None:
         connectDb()
-    CORS(app)
+    CORS(app, supports_credentials=True)
     app.secret_key = os.urandom(24)
     login_manager.init_app(app)
     app.run(debug=True)
