@@ -40,7 +40,7 @@ def register():
     user = User(request.json["username"], request.json["first_name"], request.json["last_name"], request.json["password"])
     #print(user.password)
     user.set(database)
-    return "200"
+    return jsonify(True)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -51,22 +51,28 @@ def login():
             flask_login.login_user(user)
             return jsonify(user.to_json()) 
         else:
-            return jsonify({"status": 401,
-                "reason": "Username or Password Error"})
+            # return jsonify({"status": 401,
+            #     "reason": "Username or Password Error"})
+            return app.response_class("Username or Password Error",
+                                  status=401,
+                                  mimetype='application/json')
     else:
-        return jsonify({"status": 401,
-            "reason": "Username or Password Error"})
+        # return jsonify({"status": 401,
+        #     "reason": "Username or Password Error"})
+        return app.response_class("Username or Password Error",
+                                  status=401,
+                                  mimetype='application/json')
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return jsonify({"status":200,})
+    return jsonify(True)
 
 @app.route('/check-login')
 def check_login():
     #print(flask_login.current_user.is_anonymous)
-    return (jsonify({"status":200,"data": not flask_login.current_user.is_anonymous}))
+    return (jsonify(not flask_login.current_user.is_anonymous))
 
 #given a user. Test if the user can clock in or needs to clock out
 def testClockIn(user):
@@ -87,9 +93,11 @@ def clockIn():
     if(testClockIn(user)):
         database.cursor.execute("INSERT INTO clock_entries (user_id, clock_in_time) VALUES (?, CURRENT_TIMESTAMP);",(user.id,))
         database.connection.commit()
-        return jsonify({"status":200, "data": "Clocked in"})   
+        return jsonify("Clocked In")   
     else:
-        return jsonify({"status":401, "data": "Cannot clock in"})
+        return app.response_class("Connot Clock In",
+                                  status=401,
+                                  mimetype='application/json')
 
 @app.route('/clockout')
 @login_required
@@ -101,7 +109,9 @@ def clockOut():
         database.connection.commit()
         return jsonify({"status":200, "data": "Clocked out"})   
     else:
-        return jsonify({"status":401, "data": "Cannot clock out"})
+        return app.response_class("Connot Clock Out",
+                                  status=401,
+                                  mimetype='application/json')
 
 @app.route('/report/<userId>', methods=['GET','POST'])
 @login_required
@@ -134,14 +144,16 @@ def report(userId):
                  
         return jsonify(response)
     else:
-        return jsonify({"status":401})
+        return app.response_class("No report",
+                                  status=401,
+                                  mimetype='application/json')
 
 @app.route('/delete/<recordId>', methods=['DELETE'])
 @login_required
 def deleteClock(recordId):
     database.cursor.execute("DELETE FROM clock_entries WHERE id=?",(recordId,))
     database.connection.commit()
-    return jsonify({"status":200, "data": "Deleted record"})
+    return jsonify("Deleted record")
 
 
 
@@ -155,7 +167,7 @@ def start_server():
     CORS(app, supports_credentials=True)
     app.secret_key = os.urandom(24)
     login_manager.init_app(app)
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
     #serve(app, host = "0.0.0.0", port=8080)
 
 
