@@ -37,30 +37,38 @@ def hello():
 
 @app.route('/register', methods=['POST'])
 def register():
-    user = User(request.json["username"], request.json["first_name"], request.json["last_name"], request.json["password"])
-    #print(user.password)
-    user.set(database)
-    return jsonify(True)
+    if("username" in request.json and "first_name" in request.json and "last_name" in request.json and "password" in request.json):
+        user = User(request.json["username"], request.json["first_name"], request.json["last_name"], request.json["password"])
+        #print(user.password)
+        user.set(database)
+        return jsonify(True)
+    else:
+        return app.response_class(status=400,
+                                  mimetype='application/json')
 
 @app.route('/login', methods=['POST'])
 def login():
-    username = request.json['username']
-    user = User.getByUsername(username,database)
-    if(user != False): 
-        if(check_password_hash(user.password,request.json['password'])):
-            flask_login.login_user(user)
-            return jsonify(user.to_json()) 
+    if('username' in request.json and 'password' in request.json):
+        username = request.json['username']
+        user = User.getByUsername(username,database)
+        if(user != False): 
+            if(check_password_hash(user.password,request.json['password'])):
+                flask_login.login_user(user)
+                return jsonify(user.to_json()) 
+            else:
+                # return jsonify({"status": 401,
+                #     "reason": "Username or Password Error"})
+                return app.response_class("Username or Password Error",
+                                    status=401,
+                                    mimetype='application/json')
         else:
             # return jsonify({"status": 401,
             #     "reason": "Username or Password Error"})
             return app.response_class("Username or Password Error",
-                                  status=401,
-                                  mimetype='application/json')
+                                    status=401,
+                                    mimetype='application/json')
     else:
-        # return jsonify({"status": 401,
-        #     "reason": "Username or Password Error"})
-        return app.response_class("Username or Password Error",
-                                  status=401,
+        return app.response_class(status=400,
                                   mimetype='application/json')
 
 @app.route('/logout')
