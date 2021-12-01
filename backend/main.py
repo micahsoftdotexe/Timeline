@@ -107,7 +107,8 @@ def clockOut():
         lastid = user.getClockEntries(database)[-1][0]
         database.cursor.execute("UPDATE clock_entries SET clock_out_time = CURRENT_TIMESTAMP WHERE id = ?;",(lastid,))
         database.connection.commit()
-        return jsonify({"status":200, "data": "Clocked out"})   
+        return jsonify("Clocked In")
+        #return jsonify({"status":200, "data": "Clocked out"})   
     else:
         return app.response_class("Connot Clock Out",
                                   status=401,
